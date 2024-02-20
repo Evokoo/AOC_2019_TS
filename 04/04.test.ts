@@ -1,10 +1,10 @@
 import path from "path";
 import { expect, test, describe } from "vitest";
-import { solveA, solveB } from "./00";
+import { solveA, solveB } from "./04";
 
 const currentDay = path.basename(__dirname);
 
-describe(`AOC 2019 - Day ${currentDay}`, () => {
+describe(`AOC 2018 - Day ${currentDay}`, () => {
 	describe("Part A", () => {
 		test("Example", () => {
 			expect(solveA("example_a", currentDay)).toBe(null);
