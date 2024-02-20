@@ -14,13 +14,11 @@ export function solveB(fileName: string, day: string): number {
 		{ lower, upper } = parseInput(data),
 		passwords = findPasswords(lower, upper, true);
 
-	console.log(passwords);
-
 	return passwords;
 }
 
 //Run
-solveB("input", "04");
+solveB("example_b", "04");
 
 // Functions
 function parseInput(data: string) {
