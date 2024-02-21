@@ -54,16 +54,14 @@ function countOrbits(root: Node) {
 		const current = queue.shift()!;
 
 		for (let path of current.path) {
-			paths[path] = paths[path] ? paths[path] + 1 : 1;
+			paths[path] = (paths[path] ?? 0) + 1;
 		}
 
-		if (current.node.children.length !== 0) {
-			for (let child of current.node.children) {
-				queue.push({
-					node: child,
-					path: new Set([...current.path, current.node.ID]),
-				});
-			}
+		for (let child of current.node.children) {
+			queue.push({
+				node: child,
+				path: new Set([...current.path, current.node.ID]),
+			});
 		}
 	}
 
