@@ -9,13 +9,12 @@ export function solveA(fileName: string, day: string): number {
 }
 export function solveB(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day);
-	getSignalFeedback(data);
 
-	return 0;
+	return getSignalFeedback(data);
 }
 
 //Run
-solveB("example_b", "07");
+solveB("input", "07");
 
 // Functions
 function getSignal(data: string) {
@@ -38,35 +37,38 @@ function getSignal(data: string) {
 
 	return max;
 }
-
 function getSignalFeedback(data: string) {
 	const sequences = TOOLS.generatePermutations<number>([5, 6, 7, 8, 9]);
-	const sequence = [9, 8, 7, 6, 5];
 
-	// for(let sequence of sequences){
-	const amps = Array.from(
-		{ length: 5 },
-		(_, i) => new Intcode(data, [sequence[i]])
-	);
+	let max = -Infinity;
 
-	let n = 0;
-	let index = 0;
+	for (let sequence of sequences) {
+		const amps = Array.from(
+			{ length: 5 },
+			(_, i) => new Intcode(data, [sequence[i]])
+		);
 
-	while (amps[4].running) {
-		const amp = amps[index];
+		let n = 0;
+		let index = 0;
 
-		if (amp.running) {
-			amp.addinput(n);
-			amp.run();
-			n = amp.lastLog;
+		while (amps[4].running) {
+			const amp = amps[index];
+
+			if (amp.running) {
+				amp.addinput(n);
+				amp.run();
+				n = amp.lastLog;
+			}
+
+			index++;
+
+			if (index > 4) {
+				index = 0;
+			}
 		}
 
-		index++;
-
-		if (index > 4) {
-			index = 0;
-		}
+		max = Math.max(max, n);
 	}
 
-	console.log(n);
+	return max;
 }

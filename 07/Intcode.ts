@@ -67,7 +67,7 @@ export default class Intcode {
 		}
 	};
 
-	run = () => {
+	public run = () => {
 		const { code, modes } = this.analyseRegisterValue();
 		const varibles = this.getVariables(code, modes);
 
@@ -86,7 +86,11 @@ export default class Intcode {
 				this._register[varibles[2]] = varibles[0] * varibles[1];
 				break;
 			case 3:
-				this._register[varibles[0]] = this._inputs.shift() ?? this.lastLog;
+				if (this._inputs.length) {
+					this._register[varibles[0]] = this._inputs.shift()!;
+				} else {
+					return;
+				}
 				break;
 			case 4:
 				this._log.push(this.register[varibles[0]]);
@@ -130,7 +134,7 @@ export default class Intcode {
 		return this._log[this._log.length - 1];
 	}
 
-	addinput = (value: number) => {
+	public addinput = (value: number) => {
 		this._inputs.push(value);
 	};
 }
