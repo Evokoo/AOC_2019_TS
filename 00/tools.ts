@@ -31,26 +31,31 @@ function derangement(n: number): number {
 			return (n - 1) * derangement(n - 1) + derangement(n - 2);
 	}
 }
-function generatePermutations(inputString: string): string[] {
+
+function generatePermutations<T>(inputArray: T[]): T[][] {
 	const result: Set<string> = new Set();
 
-	function permute(currentString: string, remainingChars: string) {
-		if (remainingChars.length === 0) {
-			result.add(currentString);
+	function permute(currentArray: T[], remainingElements: T[]) {
+		if (remainingElements.length === 0) {
+			result.add(currentArray.toString());
 			return;
 		}
 
-		for (let i = 0; i < remainingChars.length; i++) {
-			const char = remainingChars[i];
-			const newString = currentString + char;
-			const newRemainingChars =
-				remainingChars.slice(0, i) + remainingChars.slice(i + 1);
-			permute(newString, newRemainingChars);
+		for (let i = 0; i < remainingElements.length; i++) {
+			const element = remainingElements[i];
+			const newArray = [...currentArray, element];
+			const newRemainingElements = [
+				...remainingElements.slice(0, i),
+				...remainingElements.slice(i + 1),
+			];
+			permute(newArray, newRemainingElements);
 		}
 	}
 
-	permute("", inputString);
-	return [...result];
+	permute([], inputArray);
+	return Array.from(result).map((str) =>
+		str.split(",").map((item) => JSON.parse(item))
+	);
 }
 
 //Find the area of a ploygon, points must follow each other either clockwise or anti clockwise
