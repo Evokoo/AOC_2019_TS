@@ -10,12 +10,15 @@ export function solveA(fileName: string, day: string): number {
 	return count;
 }
 export function solveB(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
-	return 0;
+	const data = TOOLS.readData(fileName, day),
+		tree = parseInput(data),
+		distance = orbitalDistance(tree);
+
+	return distance;
 }
 
 //Run
-solveA("input", "06");
+// solveB("example_b", "06");
 
 // Functions
 type Node = { ID: string; children: Node[] };
@@ -66,4 +69,39 @@ function countOrbits(root: Node) {
 	}
 
 	return Object.values(paths).reduce((acc, cur) => acc + cur, 0);
+}
+function tracePath(root: Node, target: string) {
+	const queue: Path[] = [{ node: root, path: new Set() }];
+
+	while (true) {
+		const current = queue.shift()!;
+
+		if (current.node.ID === target) {
+			return { list: current.path, arr: [...current.path] };
+		} else {
+			for (let child of current.node.children) {
+				queue.push({
+					node: child,
+					path: new Set([...current.path, current.node.ID]),
+				});
+			}
+		}
+	}
+}
+function orbitalDistance(root: Node) {
+	const YOU = tracePath(root, "YOU");
+	const SAN = tracePath(root, "SAN");
+
+	let fork = "";
+
+	for (let key of YOU.list) {
+		if (SAN.list.has(key)) fork = key;
+	}
+
+	const yIndex = YOU.arr.indexOf(fork);
+	const sIndex = SAN.arr.indexOf(fork);
+	const yPath = YOU.arr.slice(yIndex);
+	const sPath = SAN.arr.slice(sIndex);
+
+	return yPath.length + sPath.length - 2;
 }
