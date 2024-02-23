@@ -12,7 +12,7 @@ export function solveA(fileName: string, day: string): number {
 export function solveB(fileName: string, day: string): string {
 	const data = TOOLS.readData(fileName, day),
 		layers = parseInput(data, 25, 6),
-		image = decodeLayers(layers, 25, 6);
+		image = decodeLayers(layers);
 
 	//Visually inspect image to see message
 	console.log(image);
@@ -54,7 +54,7 @@ function parseInput(data: string, width: number, height: number) {
 function findLayer(layers: Layer[]) {
 	let bestLayer = layers[0];
 
-	for (let layer of layers) {
+	for (let layer of layers.slice(1)) {
 		if (layer.digitCount["0"] < bestLayer.digitCount["0"]) {
 			bestLayer = layer;
 		}
@@ -62,7 +62,7 @@ function findLayer(layers: Layer[]) {
 
 	return bestLayer.digitCount["1"] * bestLayer.digitCount["2"];
 }
-function decodeLayers(layers: Layer[], width: number, height: number) {
+function decodeLayers(layers: Layer[]) {
 	const pixels = layers.at(-1)!.rows.map((row) => [...row]);
 
 	for (let i = layers.length - 2; i >= 0; i--) {
@@ -74,8 +74,6 @@ function decodeLayers(layers: Layer[], width: number, height: number) {
 
 				switch (pixel) {
 					case "0":
-						pixels[y][x] = pixel;
-						break;
 					case "1":
 						pixels[y][x] = pixel;
 						break;
