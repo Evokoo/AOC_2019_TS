@@ -9,13 +9,19 @@ export function solveA(fileName: string, day: string): number {
 
 	return result;
 }
-export function solveB(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
-	return 0;
+export function solveB(fileName: string, day: string): string {
+	const data = TOOLS.readData(fileName, day),
+		layers = parseInput(data, 25, 6),
+		image = decodeLayers(layers, 25, 6);
+
+	//Visually inspect image to see message
+	console.log(image);
+
+	return "UGCUH";
 }
 
 //Run
-solveA("input", "08");
+// solveB("input", "08");
 
 type Layer = { ID: number; rows: string[]; digitCount: Record<string, number> };
 
@@ -55,4 +61,36 @@ function findLayer(layers: Layer[]) {
 	}
 
 	return bestLayer.digitCount["1"] * bestLayer.digitCount["2"];
+}
+function decodeLayers(layers: Layer[], width: number, height: number) {
+	const pixels = layers.at(-1)!.rows.map((row) => [...row]);
+
+	for (let i = layers.length - 2; i >= 0; i--) {
+		const layerPixels = layers[i].rows;
+
+		for (let y = 0; y < layerPixels.length; y++) {
+			for (let x = 0; x < layerPixels[0].length; x++) {
+				const pixel = layerPixels[y][x];
+
+				switch (pixel) {
+					case "0":
+						pixels[y][x] = pixel;
+						break;
+					case "1":
+						pixels[y][x] = pixel;
+						break;
+					case "2":
+						break;
+					default:
+						throw Error("Invalid pixel");
+				}
+			}
+		}
+	}
+
+	const image = pixels
+		.map((row) => row.join("").replace(/./g, ($) => ($ === "0" ? " " : "#")))
+		.join("\n");
+
+	return image;
 }
