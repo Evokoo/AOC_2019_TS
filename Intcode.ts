@@ -6,9 +6,9 @@ export default class Intcode {
 
 	private active: boolean;
 
-	constructor(data: string, inputs: number[]) {
+	constructor(data: string, inputs?: number[]) {
 		this._register = this.initRegister(data);
-		this._inputs = inputs;
+		this._inputs = inputs ?? [];
 		this._pointer = 0;
 		this._outputs = [];
 		this.active = true;
@@ -114,6 +114,16 @@ export default class Intcode {
 	// Add an input value
 	public addinput = (value: number) => {
 		this._inputs.push(value);
+	};
+	public setRegisterValue = (pointer: number, value: number) => {
+		this._register[pointer] = value;
+	};
+	public getRegisterValue = (pointer: number) => {
+		if (!this._register[pointer]) {
+			throw RangeError("Value not found");
+		}
+
+		return this._register[pointer];
 	};
 	// Run Intocde class
 	public run = () => {
