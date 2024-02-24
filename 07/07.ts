@@ -1,6 +1,6 @@
 // Imports
 import TOOLS from "../00/tools";
-import Intcode from "./Intcode";
+import Intcode from "../Intcode";
 
 //Solutions
 export function solveA(fileName: string, day: string): number {
