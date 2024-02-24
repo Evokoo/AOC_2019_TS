@@ -127,8 +127,8 @@ export default class Intcode {
 		}
 	};
 	private outputValue = (varibles: number[]): void => {
+		// console.log(varibles);
 		this._outputs.push(this.getRegisterValue(varibles[0]));
-		// this._outputs.push(this.register[varibles[0]]);
 	};
 	private isNotZero = (varibles: number[]): boolean => {
 		if (varibles[0] !== 0) {
@@ -176,7 +176,7 @@ export default class Intcode {
 		const { code, modes } = this.analyseRegisterValue();
 		const varibles = this.getVariables(code, modes);
 
-		console.log(this._relativeBase);
+		// console.log({ code, modes, varibles, base: this._relativeBase });
 
 		let jump = false;
 
