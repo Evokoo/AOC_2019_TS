@@ -9,12 +9,11 @@ export function solveA(fileName: string, day: string): number {
 }
 export function solveB(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day);
-
 	return getSignalFeedback(data);
 }
 
 //Run
-solveB("input", "07");
+// solveB("input", "07");
 
 // Functions
 function getSignal(data: string) {
@@ -29,7 +28,7 @@ function getSignal(data: string) {
 			const intComp = new Intcode(data, [input, n]);
 			intComp.run();
 
-			n = intComp.log[0];
+			n = intComp.lastOutput;
 		}
 
 		max = Math.max(max, n);
@@ -51,13 +50,13 @@ function getSignalFeedback(data: string) {
 		let n = 0;
 		let index = 0;
 
-		while (amps[4].running) {
+		while (amps[4].isActive) {
 			const amp = amps[index];
 
-			if (amp.running) {
-				amp.addinput(n);
+			if (amp.isActive) {
+				amp.enqueueInput(n);
 				amp.run();
-				n = amp.lastLog;
+				n = amp.lastOutput;
 			}
 
 			index++;
