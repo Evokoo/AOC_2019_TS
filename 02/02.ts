@@ -7,7 +7,7 @@ export function solveA(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day),
 		intComp = new Intcode(data);
 
-	if (intComp.register.length > 15) {
+	if (intComp.register.size > 15) {
 		intComp.setRegisterValue(1, 12);
 		intComp.setRegisterValue(2, 2);
 	}
