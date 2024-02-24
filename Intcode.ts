@@ -3,15 +3,14 @@ export default class Intcode {
 	private _pointer: number;
 	private _inputs: number[];
 	private _outputs: number[];
-
-	private active: boolean;
+	private _active: boolean;
 
 	constructor(data: string, inputs?: number[]) {
 		this._register = this.initRegister(data);
 		this._inputs = inputs ?? [];
 		this._pointer = 0;
 		this._outputs = [];
-		this.active = true;
+		this._active = true;
 	}
 
 	// Intcode setup
@@ -76,11 +75,12 @@ export default class Intcode {
 	private multiplyValues = (varibles: number[]): void => {
 		this._register[varibles[2]] = varibles[0] * varibles[1];
 	};
-	private inputValue = (varibles: number[]): void => {
+	private inputValue = (varibles: number[]): boolean => {
 		if (this._inputs.length) {
 			this._register[varibles[0]] = this._inputs.shift()!;
+			return false;
 		} else {
-			return;
+			return true;
 		}
 	};
 	private outputValue = (varibles: number[]): void => {
@@ -112,7 +112,7 @@ export default class Intcode {
 	//PUBLIC METHODS
 
 	// Add an input value
-	public addinput = (value: number) => {
+	public enqueueInput = (value: number) => {
 		this._inputs.push(value);
 	};
 	public setRegisterValue = (pointer: number, value: number) => {
@@ -120,11 +120,12 @@ export default class Intcode {
 	};
 	public getRegisterValue = (pointer: number) => {
 		if (!this._register[pointer]) {
-			throw RangeError("Value not found");
+			throw RangeError("Value not found at the specified pointer");
 		}
 
 		return this._register[pointer];
 	};
+
 	// Run Intocde class
 	public run = () => {
 		const { code, modes } = this.analyseRegisterValue();
@@ -134,8 +135,8 @@ export default class Intcode {
 
 		switch (code) {
 			case 99:
-				this.active = false;
-				return false;
+				this._active = false;
+				return;
 			case 1:
 				this.addValues(varibles);
 				break;
@@ -143,7 +144,8 @@ export default class Intcode {
 				this.multiplyValues(varibles);
 				break;
 			case 3:
-				this.inputValue(varibles);
+				const exit = this.inputValue(varibles);
+				if (exit) return;
 				break;
 			case 4:
 				this.outputValue(varibles);
@@ -184,5 +186,9 @@ export default class Intcode {
 	// Get last output
 	get lastOutput(): number {
 		return this._outputs[this._outputs.length - 1];
+	}
+	// Check comp status
+	get isActive(): boolean {
+		return this._active;
 	}
 }
