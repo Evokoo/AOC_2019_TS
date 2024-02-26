@@ -8,13 +8,16 @@ export function solveA(fileName: string, day: string): number {
 		intComp = new Intcode(data, [1]);
 
 	intComp.run();
-	console.log(intComp.outputs);
 
-	return 0;
+	return intComp.lastOutput;
 }
 export function solveB(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
-	return 0;
+	const data = TOOLS.readData(fileName, day),
+		intComp = new Intcode(data, [2]);
+
+	intComp.run();
+
+	return intComp.lastOutput;
 }
 
 //Run
