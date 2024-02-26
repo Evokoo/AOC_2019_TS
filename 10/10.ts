@@ -65,6 +65,7 @@ function lineOfSight(astroid: Point, astroidMap: AstroidMap) {
 				astroidMap.grid[y][x] === "#"
 			) {
 				seen.add(`${roundedX},${roundedY}`);
+
 			} else {
 				x += Math.cos(radianAngle);
 				y += Math.sin(radianAngle);

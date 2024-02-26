@@ -30,84 +30,74 @@ export default class Intcode {
 
 		return register;
 	};
-
 	// Intcode register value processing
 	private analyseRegisterValue = () => {
-		const registerValue = Math.abs(this.getRegisterValue(this._pointer));
-		const paddedValue = String(registerValue).padStart(5, "0");
+		const instruction = `${this.getRegisterValue(this._pointer)}`.padStart(
+			5,
+			"0"
+		);
 
 		return {
-			code: +paddedValue.slice(-2),
-			modes: [...paddedValue.slice(0, 3)].reverse(),
+			code: +instruction.slice(3),
+			modes: [...instruction.slice(0, 3)].reverse(),
 		};
 	};
+
+	private getValue = (mode: number, pointer: number) => {
+		switch (mode) {
+			case 0:
+				return this.getRegisterValue(pointer);
+			case 1:
+				return pointer;
+			case 2:
+				return this.getRegisterValue(pointer) + this._relativeBase;
+			default:
+				throw Error("Invalid Mode");
+		}
+	};
+
+	private getAddress = (mode: number, pointer: number): number => {
+		switch (mode) {
+			case 0:
+				return this.getRegisterValue(pointer);
+			case 2:
+				return this.getRegisterValue(pointer) + this._relativeBase;
+			default:
+				throw Error("Invalid Mode");
+		}
+	};
 	private getVariables = (code: number, modes: string[]): number[] => {
-		let varibles: number[] = [];
+		console.log({
+			pointer: this._pointer,
+			code,
+			modes,
+			val: this.getRegisterValue(this._pointer),
+		});
 
 		switch (code) {
 			case 1:
 			case 2:
 			case 7:
 			case 8:
-				varibles = [
-					this.getRegisterValue(this._pointer + 1),
-					this.getRegisterValue(this._pointer + 2),
-					this.getRegisterValue(this._pointer + 3),
+				return [
+					this.getValue(+modes[2], this._pointer + 1),
+					this.getValue(+modes[1], this._pointer + 2),
+					this.getAddress(+modes[0], this._pointer + 3),
 				];
-				break;
 			case 3:
+				return [this.getAddress(+modes[2], this._pointer + 1)];
 			case 4:
 			case 9:
-				varibles = [this.getRegisterValue(this._pointer + 1)];
-				break;
+				return [this.getValue(+modes[2], this._pointer + 1)];
 			case 5:
 			case 6:
-				varibles = [
-					this.getRegisterValue(this._pointer + 1),
-					this.getRegisterValue(this._pointer + 2),
+				return [
+					this.getValue(+modes[2], this._pointer + 1),
+					this.getValue(+modes[1], this._pointer + 2),
 				];
-				break;
 			default:
 				return [];
 		}
-
-		let offset = 0;
-
-		if ([1, 2, 3, 4, 7, 8, 9].includes(code)) {
-			offset = 1;
-		}
-
-		for (let i = 0; i < varibles.length - offset; i++) {
-			const mode = +modes[i];
-			const varible = varibles[i];
-
-			switch (mode) {
-				case 0:
-					varibles[i] = this.getRegisterValue(varible);
-					break;
-				case 1:
-					break;
-				case 2:
-					let pointer = varible + this._relativeBase;
-					let registerSize = this._register.size;
-
-					if (pointer > registerSize) {
-						pointer = pointer % registerSize;
-					}
-
-					if (pointer < 0) {
-						pointer = (pointer + registerSize) % registerSize;
-					}
-
-					varibles[i] = pointer;
-
-					break;
-				default:
-					throw Error("Invalid mode");
-			}
-		}
-
-		return varibles;
 	};
 
 	// Intcode numbered methods
@@ -163,20 +153,18 @@ export default class Intcode {
 		this._inputs.push(value);
 	};
 	public setRegisterValue = (pointer: number, value: number) => {
-		if (pointer < 0) throw RangeError("Pointer cannot be negative");
+		// if (pointer < 0) throw RangeError("Pointer cannot be negative");
 		this._register.set(pointer, value);
 	};
 	public getRegisterValue = (pointer: number) => {
-		if (pointer < 0) throw RangeError("Pointer cannot be negative");
+		// if (pointer < 0) throw RangeError("Pointer cannot be negative");
 		return this._register.get(pointer) ?? 0;
 	};
 
-	// Run Intocde class
 	public run = () => {
 		const { code, modes } = this.analyseRegisterValue();
 		const varibles = this.getVariables(code, modes);
-
-		// console.log({ code, modes, varibles, base: this._relativeBase });
+		const step = varibles.length + 1;
 
 		let jump = false;
 
@@ -216,7 +204,7 @@ export default class Intcode {
 		}
 
 		if (!jump) {
-			this._pointer += varibles.length + 1;
+			this._pointer += step;
 		}
 
 		this.run();

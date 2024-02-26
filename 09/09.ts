@@ -5,7 +5,7 @@ import Intcode from "../Intcode";
 //Solutions
 export function solveA(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day),
-		intComp = new Intcode(data);
+		intComp = new Intcode(data, [1]);
 
 	intComp.run();
 	console.log(intComp.outputs);
@@ -18,6 +18,6 @@ export function solveB(fileName: string, day: string): number {
 }
 
 //Run
-solveA("example_a", "09");
+solveA("input", "09");
 
 // Functions
