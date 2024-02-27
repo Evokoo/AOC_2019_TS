@@ -37,7 +37,11 @@ function runRobot(data: string, initialColour: number) {
 
 	const intComp = new Intcode(data, [initialColour]);
 	const panels: Map<string, number> = new Map();
-	const robot: Robot = { x: size / 2, y: size / 2, bearing: 180 };
+	const robot: Robot = {
+		x: size / 2,
+		y: size / 2,
+		bearing: initialColour === 1 ? 180 : 0,
+	};
 
 	while (intComp.isActive) {
 		intComp.run();
@@ -45,7 +49,10 @@ function runRobot(data: string, initialColour: number) {
 		const [colour, turn] = intComp.outputs.slice(-2);
 
 		panels.set(`${robot.x},${robot.y}`, colour);
-		canvas[robot.y][robot.x] = colour === 1 ? "▓" : " ";
+
+		if (initialColour === 1) {
+			canvas[robot.y][robot.x] = colour === 1 ? "▓" : " ";
+		}
 
 		robot.bearing += turn === 0 ? -90 : 90;
 		robot.bearing = (robot.bearing + (robot.bearing < 0 ? 360 : 0)) % 360;
@@ -67,7 +74,7 @@ function runRobot(data: string, initialColour: number) {
 				throw Error("Invaild bearing");
 		}
 
-		intComp.enqueueInput(colour);
+		intComp.enqueueInput(panels.get(`${robot.x},${robot.y}`) ?? 0);
 	}
 
 	const registrationCode = canvas.map((row) => row.join("")).join("\n");
