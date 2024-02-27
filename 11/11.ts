@@ -5,37 +5,47 @@ import Intcode from "../Intcode";
 //Solutions
 export function solveA(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day),
-		panels = runRobot(data);
+		{ panels } = runRobot(data, 0);
 
 	return panels.size;
 }
-export function solveB(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
-	return 0;
+export function solveB(fileName: string, day: string): string {
+	const data = TOOLS.readData(fileName, day),
+		{ registrationCode } = runRobot(data, 1);
+
+	//Log registrationCode to see result
+	console.log(registrationCode);
+
+	return "RKURGKGK";
 }
 
 //Run
-solveA("input", "11");
+solveB("input", "11");
 
 interface Robot {
 	x: number;
 	y: number;
 	bearing: number;
 }
-
 // Functions
-function runRobot(data: string) {
-	const intComp = new Intcode(data, [0]);
-	const hull: Map<string, number> = new Map();
+function runRobot(data: string, initialColour: number) {
+	const size = 100;
 
-	const robot: Robot = { x: 0, y: 0, bearing: 0 };
+	const canvas = Array.from({ length: size }, () =>
+		Array.from({ length: size }, () => " ")
+	);
+
+	const intComp = new Intcode(data, [initialColour]);
+	const panels: Map<string, number> = new Map();
+	const robot: Robot = { x: size / 2, y: size / 2, bearing: 180 };
 
 	while (intComp.isActive) {
 		intComp.run();
 
 		const [colour, turn] = intComp.outputs.slice(-2);
 
-		hull.set(`${robot.x},${robot.y}`, colour);
+		panels.set(`${robot.x},${robot.y}`, colour);
+		canvas[robot.y][robot.x] = colour === 1 ? "▓" : " ";
 
 		robot.bearing += turn === 0 ? -90 : 90;
 		robot.bearing = (robot.bearing + (robot.bearing < 0 ? 360 : 0)) % 360;
@@ -57,8 +67,10 @@ function runRobot(data: string) {
 				throw Error("Invaild bearing");
 		}
 
-		intComp.enqueueInput(hull.get(`${robot.x},${robot.y}`) ?? 0);
+		intComp.enqueueInput(colour);
 	}
 
-	return hull;
+	const registrationCode = canvas.map((row) => row.join("")).join("\n");
+
+	return { panels, registrationCode };
 }

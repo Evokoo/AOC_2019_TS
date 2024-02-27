@@ -21,7 +21,7 @@ describe(`AOC 2019 - Day ${currentDay}`, () => {
 		});
 
 		test("Solution", () => {
-			expect(solveB("input", currentDay)).toBe(null);
+			expect(solveB("input", currentDay)).toBe("RKURGKGK");
 		});
 	});
 });
