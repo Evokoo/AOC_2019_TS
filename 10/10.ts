@@ -5,17 +5,20 @@ import TOOLS from "../00/tools";
 export function solveA(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day),
 		astroidMap = parseInput(data),
-		stationLocation = locateStation(astroidMap);
+		{ location, visible } = locateStation(astroidMap);
 
-	return 0;
+	return visible;
 }
 export function solveB(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
-	return 0;
+	const data = TOOLS.readData(fileName, day),
+		astroidMap = parseInput(data),
+		{ location, visible } = locateStation(astroidMap);
+
+	return visible;
 }
 
 //Run
-solveA("example_a", "10");
+solveB("example_b", "10");
 
 // Functions
 type Point = { x: number; y: number };
@@ -30,50 +33,42 @@ function parseInput(data: string) {
 
 	return { grid, dimensions: { maxY, maxX } };
 }
-
 function locateStation(astroidMap: AstroidMap) {
+	let visible = 0;
+	let location = { x: 0, y: 0 };
+
 	for (let y = 0; y < astroidMap.dimensions.maxY; y++) {
 		for (let x = 0; x < astroidMap.dimensions.maxX; x++) {
 			if (astroidMap.grid[y][x] === "#") {
-				lineOfSight({ x, y }, astroidMap);
-				// console.log(visibleAstroids);
+				const count = lineOfSight({ x, y }, astroidMap);
+
+				if (count > visible) {
+					visible = count;
+					location = { x, y };
+				}
 			}
 		}
 	}
+
+	return { location, visible };
 }
-
 function lineOfSight(astroid: Point, astroidMap: AstroidMap) {
-	const seen: Set<string> = new Set();
+	const visble: Set<number> = new Set();
 
-	for (let angle = 0; angle < 360; angle++) {
-		const radianAngle = (angle * Math.PI) / 180;
-		let x = astroid.x + Math.cos(radianAngle);
-		let y = astroid.y + Math.sin(radianAngle);
-
-		while (
-			x >= 0 &&
-			y >= 0 &&
-			x < astroidMap.dimensions.maxX - 1 &&
-			y < astroidMap.dimensions.maxY - 1
-		) {
-			const roundedX = Math.round(x);
-			const roundedY = Math.round(y);
-
+	for (let y = 0; y < astroidMap.dimensions.maxY; y++) {
+		for (let x = 0; x < astroidMap.dimensions.maxX; x++) {
 			if (
-				Number.isInteger(x) &&
-				Number.isInteger(y) &&
-				astroidMap.grid[y][x] === "#"
+				astroidMap.grid[y][x] === "#" &&
+				!(astroid.y === y && astroid.x === x)
 			) {
-				seen.add(`${roundedX},${roundedY}`);
-
-			} else {
-				x += Math.cos(radianAngle);
-				y += Math.sin(radianAngle);
+				const angle = Math.atan2(y - astroid.y, x - astroid.x);
+				visble.add(angle);
 			}
 		}
 	}
 
-	console.log(astroid, seen);
+	return visble.size;
 
 	// console.log({ astroid, visible, count: visible.length });
 }
+function destroyAstroids(astroid: P);
