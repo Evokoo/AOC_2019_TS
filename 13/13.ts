@@ -4,10 +4,11 @@ import Intcode from "../Intcode";
 
 //Solutions
 export function solveA(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
+	const data = TOOLS.readData(fileName, day),
+		intComp = new Intcode(data),
+		blocks = countBlocks(intComp);
 
-	runIntCode(data);
-	return 0;
+	return blocks;
 }
 export function solveB(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day);
@@ -15,9 +16,26 @@ export function solveB(fileName: string, day: string): number {
 }
 
 //Run
-solveA("example_a", "13");
+solveA("input", "13");
+
+type Tiles = Map<string, number>;
 
 // Functions
-function runIntCode(data: string) {
-	const intComp = new Intcode(data);
+
+function countBlocks(intComp: Intcode) {
+	let blocks = 0;
+
+	intComp.run();
+
+	const instructions = intComp.outputs;
+
+	for (let i = 0; i < instructions.length; i += 3) {
+		const [_x, _y, tile] = instructions.slice(i, i + 3);
+
+		if (tile === 2) {
+			blocks++;
+		}
+	}
+
+	return blocks;
 }
