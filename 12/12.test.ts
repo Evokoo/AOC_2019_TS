@@ -17,11 +17,11 @@ describe(`AOC 2019 - Day ${currentDay}`, () => {
 
 	describe("Part B", () => {
 		test("Example", () => {
-			expect(solveB("example_b", currentDay)).toBe(null);
+			expect(solveB("example_b", currentDay)).toBe(4686774924);
 		});
 
 		test("Solution", () => {
-			expect(solveB("input", currentDay)).toBe(null);
+			expect(solveB("input", currentDay)).toBe(543673227860472);
 		});
 	});
 });

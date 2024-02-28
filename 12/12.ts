@@ -12,15 +12,14 @@ export function solveA(fileName: string, day: string): number {
 }
 export function solveB(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day),
-		moons = parseInput(data);
+		moons = parseInput(data),
+		step = findCycle(moons);
 
-	findCycle(moons);
-
-	return 0;
+	return step;
 }
 
 //Run
-solveB("example_b", "12");
+// solveB("example_b", "12");
 
 type XYZ = { x: number; y: number; z: number; [key: string]: number };
 type Moon = { pos: XYZ; vel: XYZ };
@@ -31,8 +30,6 @@ function parseInput(data: string) {
 
 	for (let line of data.split("\r\n")) {
 		const [x, y, z] = (line.match(/-*\d+/g) || []).map(Number);
-
-		console.log({ line });
 
 		moons.push({
 			pos: { x, y, z },
@@ -51,12 +48,58 @@ function runSimulation(moons: Moon[], steps: number) {
 	return getSystemEnergy(moons);
 }
 function findCycle(moons: Moon[]) {
-	const moonData: Set<string> = new Set([moon]);
+	let states = { x: new Set(), y: new Set(), z: new Set() };
 
-	// while(true) {
-	// 	moons = updateVelocity(moons);
-	// 	moons = updatePosition(moons);
-	// }
+	function getStates(moons: Moon[]) {
+		const [x, y, z]: number[][] = [[], [], []];
+
+		for (let moon of moons) {
+			x.push(moon.pos.x, moon.vel.x);
+			y.push(moon.pos.y, moon.vel.y);
+			z.push(moon.pos.z, moon.vel.z);
+		}
+
+		return [x, y, z].map((arr) => arr.join(","));
+	}
+
+	let [stepX, stepY, stepZ] = [0, 0, 0];
+
+	for (let i = 0; true; i++) {
+		const [x, y, z] = getStates(moons);
+
+		if (stepX === 0) {
+			if (states.x.has(x)) {
+				stepX = i;
+			} else {
+				states.x.add(x);
+			}
+		}
+
+		if (stepY === 0) {
+			if (states.y.has(y)) {
+				stepY = i;
+			} else {
+				states.y.add(y);
+			}
+		}
+
+		if (stepZ === 0) {
+			if (states.z.has(z)) {
+				stepZ = i;
+			} else {
+				states.z.add(z);
+			}
+		}
+
+		if (stepX !== 0 && stepY !== 0 && stepZ !== 0) {
+			break;
+		}
+
+		moons = updateVelocity(moons);
+		moons = updatePosition(moons);
+	}
+
+	return TOOLS.arrLCM([stepX, stepY, stepZ]);
 }
 function updateVelocity(moons: Moon[]) {
 	for (let i = 0; i < moons.length; i++) {
