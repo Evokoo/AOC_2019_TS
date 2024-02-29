@@ -167,6 +167,12 @@ export default class Intcode {
 		}
 	};
 
+	public clone = (): Intcode => {
+		const clone = new Intcode("0");
+		clone._register = new Map(this._register.entries());
+		return clone;
+	};
+
 	//GETTERS & SETTERS
 
 	// Get Registers
