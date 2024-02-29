@@ -18,7 +18,7 @@ export function solveB(fileName: string, day: string): number {
 }
 
 //Run
-solveB("input", "15");
+// solveB("input", "15");
 
 // Functions
 type Path = { x: number; y: number; droid: Intcode; steps: number };
