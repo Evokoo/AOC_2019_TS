@@ -63,6 +63,8 @@ export default class Intcode {
 		return this._register.get(pointer) ?? 0;
 	};
 	public run = () => {
+		console.log("Intcode Running...");
+
 		while (this.isActive) {
 			const registerValue = `${this.getRegisterValue(this._pointer)}`;
 			const instruction = registerValue.padStart(5, "0");
