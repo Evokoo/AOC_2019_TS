@@ -4,6 +4,7 @@ import TOOLS from "../00/tools";
 //Solutions
 export function solveA(fileName: string, day: string): number {
 	const data = TOOLS.readData(fileName, day);
+	parseInput(data);
 	return 0;
 }
 export function solveB(fileName: string, day: string): number {
@@ -55,5 +56,5 @@ function parseInput(data: string) {
 		}
 	}
 
-	console.log(locations);
+	console.log(locations.items);
 }
