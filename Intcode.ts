@@ -63,7 +63,7 @@ export default class Intcode {
 		return this._register.get(pointer) ?? 0;
 	};
 	public run = () => {
-		console.log("Intcode Running...");
+		// console.log("Intcode Running...");
 
 		while (this.isActive) {
 			const registerValue = `${this.getRegisterValue(this._pointer)}`;
