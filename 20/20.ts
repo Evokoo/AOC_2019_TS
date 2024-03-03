@@ -15,7 +15,7 @@ export function solveB(fileName: string, day: string): number {
 }
 
 //Run
-solveA("example_a", "20");
+solveB("example_b", "20");
 
 // Functions
 type Point = { x: number; y: number };
@@ -152,7 +152,7 @@ function parseInput(data: string) {
 
 	return { grid, portals };
 }
-function findPath(grid: string[][], portals: Portals) {
+function findPath(grid: Grid, portals: Portals) {
 	const start = toPoint(portals.get("start")!);
 	const queue: Path[] = [
 		{ x: start.x, y: start.y, steps: 0, teleported: false },
