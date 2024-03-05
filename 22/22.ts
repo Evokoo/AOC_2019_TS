@@ -10,12 +10,15 @@ export function solveA(fileName: string, day: string): number {
 	return deck.indexOf(2019);
 }
 export function solveB(fileName: string, day: string): number {
-	const data = TOOLS.readData(fileName, day);
+	const data = TOOLS.readData(fileName, day),
+		instructions = parseInput(data),
+		deck = shuffleDeck(instructions, 119315717514047);
+
 	return 0;
 }
 
 //Run
-solveA("input", "22");
+solveB("input", "22");
 
 // Functions
 type Instruction = { type: string; value: number };
